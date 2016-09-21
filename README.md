@@ -19,3 +19,7 @@ Após a instalação utilize o comando
 ```sh
 node app.js
 ```
+
+### Autores
+##### Luiz Eduardo Costantin dos Santos (eduselcip@gmail.com)
+##### Rodrigo de Araujo Souza (rodrigo.souza32@gmail.com)
