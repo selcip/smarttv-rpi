@@ -11,7 +11,8 @@ var express = require('express'),
     server = require('http').createServer(app),
     io = require('socket.io')(server),
     path = require('path'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    ss;
 
 //env
 app.set('port', process.env.PORT || 8080);
@@ -34,9 +35,6 @@ app.get('/conteudo', function(req, res){
   res.sendFile(__dirname + '/public/conteudo.html')
 });
 
-//config do socket
-io.set('log level', 1);
-
 //server
 server.listen(app.get('port'), function(){
   console.log('Feichas TV em execução na porta ' + app.get('port'));
@@ -47,13 +45,18 @@ io.sockets.on('connection', function(socket){
   socket.on("mainscreen", function(object){
     socket.type = "mainscreen";
     ss = socket;
-    console.log('Aguardando controle..');
+    console.log('Aguardando controle..' + ss);
   });
   socket.on("remotecontrol", function(object){
-    socket.type = "remotecontrol";
+    socket.type = "remote";
     console.log('Controle remoto pronto..')
   });
   socket.on("videoyt", function(object){
     console.log(object);
-  })
+    if(socket.type === "remote"){
+      if(object != undefined && ss != undefined){
+        ss.emit("video", object);
+      }
+    }
+  });
 });

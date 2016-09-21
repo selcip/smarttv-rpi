@@ -30,7 +30,8 @@ function searchvideo(query){
   });
 };
 
-$('#searchyt').change(function(){
+$('form').on('submit', function(e){
+  e.preventDefault();
   searchvideo(document.getElementById("searchyt").value);
 })
 

@@ -1,18 +1,17 @@
-var images = [], x = 1, socket = io(), app = document;
+var images = [], x = 1, app = document;
+var host = document.location.origin;
+var socket = io.connect(host);
 
 app.querySelector('.state').innerHTML = "Aguardando controle..";
 
 socket.on('connect', function(data){
+    console.log("Servidor de socket conectado (Tela Principal)");
     socket.emit('mainscreen');
 });
 
-socket.on('remotecontrol', function(data){
-    app.querySelector('.state').innerHTML = "Controle conectado!";
-});
-
-socket.on('command', function(data){
-
-});
+socket.on('video', function(data){
+  console.log(data);
+})
 
 for (let i = 0; i<101; i++){
     images[i] = i+1;
