@@ -53,4 +53,7 @@ io.sockets.on('connection', function(socket){
     socket.type = "remotecontrol";
     console.log('Controle remoto pronto..')
   });
+  socket.on("videoyt", function(object){
+    console.log(object);
+  })
 });
