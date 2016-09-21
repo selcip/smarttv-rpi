@@ -26,6 +26,10 @@ app.get('/remote', function(req, res){
   res.sendFile(__dirname + '/public/remote.html')
 });
 
+app.get('/remote/youtube', function(req, res){
+  res.sendFile(__dirname + '/public/youtube.html')
+});
+
 app.get('/conteudo', function(req, res){
   res.sendFile(__dirname + '/public/conteudo.html')
 });
