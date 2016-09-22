@@ -41,6 +41,14 @@ app.get('/conteudo', function(req, res){
   res.sendFile(__dirname + '/public/conteudo.html')
 });
 
+function run_shell(cmd, args, cb, end) {
+    var spawn = require('child_process').spawn,
+        child = spawn(cmd, args),
+        me = this;
+    child.stdout.on('data', function (buffer) { cb(me, buffer); });
+    child.stdout.on('end', end);
+}
+
 //server
 server.listen(app.get('port'), function(){
   console.log('Feichas TV em execução na porta ' + app.get('port'));
