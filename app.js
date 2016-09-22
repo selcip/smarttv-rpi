@@ -12,7 +12,6 @@ var express = require('express'),
     io = require('socket.io')(server),
     path = require('path'),
     bodyParser = require('body-parser'),
-    spawn = require('child_process').spawn,
     omx = require('omxcontrol'),
     ss;
 
@@ -20,6 +19,7 @@ var express = require('express'),
 app.set('port', process.env.PORT || 8080);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(omx());
+
 //rotas
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/public/index.html')
@@ -41,6 +41,12 @@ app.get('/conteudo', function(req, res){
   res.sendFile(__dirname + '/public/conteudo.html')
 });
 
+//server
+server.listen(app.get('port'), function(){
+  console.log('Feichas TV em execução na porta ' + app.get('port'));
+});
+
+//funcao shell
 function run_shell(cmd, args, cb, end) {
     var spawn = require('child_process').spawn,
         child = spawn(cmd, args),
@@ -49,33 +55,37 @@ function run_shell(cmd, args, cb, end) {
     child.stdout.on('end', end);
 }
 
-//server
-server.listen(app.get('port'), function(){
-  console.log('Feichas TV em execução na porta ' + app.get('port'));
-});
-
 //server socket
 io.sockets.on('connection', function(socket){
   socket.on("mainscreen", function(object){
     socket.type = "mainscreen";
     ss = socket;
-    console.log('Aguardando controle..' + ss);
   });
   socket.on("remotecontrol", function(object){
     socket.type = "remote";
-    console.log('Controle remoto pronto..')
   });
   socket.on("videoyt", function(object){
-    var url = "http://www.youtube.com/watch?v="+object;
-
-    var runShell = new run_shell('youtube-dl',['-o','%(id)s.%(ext)s','-f','/18/22',url],
+    var runShell1 = new run_shell('rm',['yt.mp4'],
         function (me, buffer) {
             me.stdout += buffer.toString();
             socket.emit("loading",{output: me.stdout});
             console.log(me.stdout);
          },
         function () {
-            omx.start(object+'.mp4');
+            console.log('deletando o arquivo já existente');
+        });
+        
+    var id = object, url = "http://www.youtube.com/watch?v="+object;
+    
+    var runShell2 = new run_shell('youtube-dl',['-o','yt.mp4 ',url],
+        function (me, buffer) {
+            me.stdout += buffer.toString();
+            socket.emit("loading",{output: me.stdout});
+            console.log(me.stdout);
+         },
+        function () {
+            omx.start('yt.mp4');
+            console.log('Vídeo iniciado');
         });
   });
 });
