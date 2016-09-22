@@ -12,12 +12,14 @@ var express = require('express'),
     io = require('socket.io')(server),
     path = require('path'),
     bodyParser = require('body-parser'),
+    spawn = require('child_process').spawn,
+    omx = require('omxcontrol'),
     ss;
 
 //env
 app.set('port', process.env.PORT || 8080);
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(omx());
 //rotas
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/public/index.html')
@@ -56,11 +58,16 @@ io.sockets.on('connection', function(socket){
     console.log('Controle remoto pronto..')
   });
   socket.on("videoyt", function(object){
-    console.log(object);
-    if(socket.type === "remote"){
-      if(object != undefined && ss != undefined){
-        ss.emit("video", object);
-      }
-    }
+    var url = "http://www.youtube.com/watch?v="+object;
+
+    var runShell = new run_shell('youtube-dl',['-o','%(id)s.%(ext)s','-f','/18/22',url],
+        function (me, buffer) {
+            me.stdout += buffer.toString();
+            socket.emit("loading",{output: me.stdout});
+            console.log(me.stdout);
+         },
+        function () {
+            omx.start(object+'.mp4');
+        });
   });
 });
