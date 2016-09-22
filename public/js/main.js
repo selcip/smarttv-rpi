@@ -10,7 +10,7 @@ socket.on('connect', function(data){
 });
 
 socket.on('video', function(data){
-  console.log(data);
+  alert("youtube.com/?v=" + data);
 })
 
 for (let i = 0; i<101; i++){

@@ -31,6 +31,10 @@ app.get('/remote/youtube', function(req, res){
   res.sendFile(__dirname + '/public/youtube.html')
 });
 
+app.get('/remote/torrent', function(req, res){
+  res.sendFile(__dirname + '/public/torrent.html')
+});
+
 app.get('/conteudo', function(req, res){
   res.sendFile(__dirname + '/public/conteudo.html')
 });
