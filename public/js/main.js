@@ -2,15 +2,15 @@ var images = [], x = 1, app = document;
 var host = document.location.origin;
 var socket = io.connect(host);
 
-app.querySelector('.state').innerHTML = "Aguardando controle..";
+app.querySelector('.state').innerHTML = "Aguardando comando..";
 
 socket.on('connect', function(data){
     console.log("Servidor de socket conectado (Tela Principal)");
     socket.emit('mainscreen');
 });
 
-socket.on('video', function(data){
-  alert("youtube.com/?v=" + data);
+socket.on("loading", function(data){
+	app.querySelector('.state').innerHTML = "Fazendo download do vídeo..";
 })
 
 for (let i = 0; i<101; i++){
